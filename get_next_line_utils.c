@@ -6,35 +6,11 @@
 /*   By: suhkim <suhkim@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/22 18:50:33 by suhkim            #+#    #+#             */
-/*   Updated: 2022/06/22 18:57:10 by suhkim           ###   ########.fr       */
+/*   Updated: 2022/06/28 17:42:08 by suhkim           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-
-char	*ft_strjoin(char *s1, char *s2)
-{
-	char	*str;
-	size_t	s1_len;
-	size_t	s2_len;
-
-	if (!s2)
-		return (s1);
-	s1_len = 0;
-	while (s1 && *(s1 + s1_len))
-		s1_len++;
-	s2_len = 0;
-	while (*(s2 + s2_len))
-		s2_len++;
-	str = (char *)malloc(sizeof(char) * (s1_len + s2_len + 1));
-	if (!str)
-		return (0);
-	if (s1)
-		ft_strlcpy(str, (char *)s1, s1_len + 1);
-	ft_strlcpy(str + s1_len, (char *)s2, s2_len + 1);
-	free(s1);
-	return (str);
-}
 
 char	*ft_strchr(const char *s, int c)
 {
@@ -58,28 +34,44 @@ char	*ft_strchr(const char *s, int c)
 	return (0);
 }
 
-size_t	ft_strlcat(char *dst, const char *src, size_t dstsize)
+char	*ft_strdup(char *s)
 {
-	size_t	i;
-	size_t	d_len;
-	size_t	s_len;
+	size_t	len;
+	char	*str;
 
-	d_len = 0;
-	while (*(dst + d_len))
-		d_len++;
-	s_len = 0;
-	while (*(src + s_len))
-		s_len++;
-	i = 0;
-	if (d_len >= dstsize)
-		return (s_len + dstsize);
-	while (*(src + i) != '\0' && d_len + i < dstsize - 1)
-	{
-		*(dst + d_len + i) = *(src + i);
-		i++;
-	}
-	*(dst + d_len + i) = '\0';
-	return (s_len + d_len);
+	if (!s)
+		return (0);
+	len = 0;
+	while (*(s + len))
+		len++;
+	str = (char *)malloc(sizeof(char) * (len + 1));
+	if (!str)
+		return (0);
+	ft_strlcpy(str, s, len + 1);
+	return (str);
+}
+
+char	*ft_strjoin(char *s1, char *s2)
+{
+	char	*str;
+	size_t	s1_len;
+	size_t	s2_len;
+
+	if (!s1)
+		return (ft_strdup(s2));
+	s1_len = 0;
+	while (s1 && *(s1 + s1_len))
+		s1_len++;
+	s2_len = 0;
+	while (*(s2 + s2_len))
+		s2_len++;
+	str = (char *)malloc(sizeof(char) * (s1_len + s2_len + 1));
+	if (!str)
+		return (0);
+	ft_strlcpy(str, s1, s1_len + 1);
+	ft_strlcpy(str + s1_len, s2, s2_len + 1);
+	free(s1);
+	return (str);
 }
 
 void	ft_strlcpy(char *dst, char *src, size_t dstsize)
@@ -103,17 +95,10 @@ void	ft_strlcpy(char *dst, char *src, size_t dstsize)
 	*(dst + i) = '\0';
 }
 
-void	lst_del(t_list	*head)
-{
-	t_list	*temp;
-	t_list	*node;
-
-	node = head->next;
-	while (node)
-	{
-		free(node->str);
-		temp = node;
-		node = node->next;
-		free(temp);
-	}
+void	lst_del(t_list	*lst)
+{	
+	lst->pre->next = lst->next;
+	if (lst->next)
+		lst->next->pre = lst->pre;
+	free(lst);
 }
